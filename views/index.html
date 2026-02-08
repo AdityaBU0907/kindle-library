@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kindle Library</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <ul><li><strong>📚 My Kindle Library</strong></li></ul>
+            <ul><li><a href="/login" role="button" class="outline">Admin Login</a></li></ul>
+        </nav>
+
+        <input type="search" id="search" placeholder="Search books..." onkeyup="filterBooks()">
+
+        <table role="grid">
+            <thead>
+                <tr>
+                    <th>Book Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="book-list">
+                </tbody>
+        </table>
+    </main>
+
+    <script>
+        async function loadBooks() {
+            const res = await fetch('/api/books');
+            const books = await res.json();
+            const tbody = document.getElementById('book-list');
+            tbody.innerHTML = books.map(book => `
+                <tr>
+                    <td>${book}</td>
+                    <td><a href="/books/${book}" role="button" class="contrast">Download</a></td>
+                </tr>
+            `).join('');
+        }
+        loadBooks();
+    </script>
+</body>
+</html>

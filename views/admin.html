@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style> .danger-zone { border: 1px solid red; padding: 20px; border-radius: 8px; } </style>
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <ul><li><strong>⚙️ Admin Panel</strong></li></ul>
+            <ul>
+                <li><a href="/">View Library</a></li>
+                <li><a href="/logout" role="button" class="secondary">Logout</a></li>
+            </ul>
+        </nav>
+
+        <article>
+            <header><strong>Upload New Book (PDF)</strong></header>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <label for="file">Select PDF
+                    <input type="file" id="file" name="pdf" accept=".pdf" required>
+                </label>
+                <small>File will be automatically converted to AZW3.</small>
+                <button type="submit" aria-busy="false" onclick="this.setAttribute('aria-busy', 'true')">Upload & Convert</button>
+            </form>
+        </article>
+
+        <h3>Manage Library</h3>
+        <table role="grid">
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id="admin-list"></tbody>
+        </table>
+    </main>
+
+    <script>
+        async function loadAdminBooks() {
+            const res = await fetch('/api/books');
+            const books = await res.json();
+            const tbody = document.getElementById('admin-list');
+            tbody.innerHTML = books.map(book => `
+                <tr>
+                    <td>${book}</td>
+                    <td>
+                        <form action="/delete" method="POST" style="margin:0;">
+                            <input type="hidden" name="filename" value="${book}">
+                            <button type="submit" class="outline headings" style="color:red; border-color:red;">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        loadAdminBooks();
+    </script>
+</body>
+</html>
